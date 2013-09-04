@@ -14,7 +14,7 @@ func panicIfErr(err error) {
 	}
 }
 
-func debugDraw(result []marchingsquare.Point, oldfile, newfile string, what color.Color) {
+func debugDraw(result []image.Point, oldfile, newfile string, what color.Color) {
 	old, err := os.Open(oldfile)
 	defer old.Close()
 	panicIfErr(err)

@@ -2,6 +2,7 @@ package marchingsquare
 
 import (
 	"image"
+
 	"image/jpeg"
 	"image/png"
 	"os"
@@ -24,17 +25,13 @@ const (
 	directionRight
 )
 
-type Point struct {
-	X, Y int
-}
-
 type TestFunc func(r, g, b, a uint32) bool
 
 type marchingSquare struct {
 	img          image.Image
 	previousStep int
 	nextStep     int
-	result       []Point
+	result       []image.Point
 	test         TestFunc
 }
 
@@ -145,7 +142,7 @@ func (m *marchingSquare) walk(startX, startY int) {
 	for {
 		m.step(x, y)
 		if x >= b.Min.X && x < b.Max.X && y >= b.Min.Y && y < b.Max.Y {
-			m.result = append(m.result, Point{x, y})
+			m.result = append(m.result, image.Point{x, y})
 		}
 		switch m.nextStep {
 		case diretionUp:
@@ -163,15 +160,15 @@ func (m *marchingSquare) walk(startX, startY int) {
 	}
 }
 
-func (m *marchingSquare) doMarch(img image.Image, f TestFunc) []Point {
+func (m *marchingSquare) doMarch(img image.Image, f TestFunc) []image.Point {
 	m.img = img
 	m.test = f
-	m.result = make([]Point, 0)
+	m.result = make([]image.Point, 0)
 	m.walk(m.findStartPoint())
 	return m.result
 }
 
-func (m *marchingSquare) doMarchWithFileName(filename string, f TestFunc) []Point {
+func (m *marchingSquare) doMarchWithFileName(filename string, f TestFunc) []image.Point {
 	file, err := os.Open(filename)
 	defer file.Close()
 	panicIfErr(err)
@@ -180,12 +177,12 @@ func (m *marchingSquare) doMarchWithFileName(filename string, f TestFunc) []Poin
 	return m.doMarch(img, f)
 }
 
-func Process(img image.Image, f TestFunc) []Point {
+func Process(img image.Image, f TestFunc) []image.Point {
 	m := marchingSquare{}
 	return m.doMarch(img, f)
 }
 
-func ProcessWithFile(filename string, f TestFunc) []Point {
+func ProcessWithFile(filename string, f TestFunc) []image.Point {
 	m := marchingSquare{}
 	return m.doMarchWithFileName(filename, f)
 }
